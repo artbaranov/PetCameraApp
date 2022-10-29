@@ -1,43 +1,39 @@
 package storytelling.apps.testcameraapp
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.os.Bundle
+import android.provider.MediaStore
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.LaunchedEffect
 import storytelling.apps.testcameraapp.ui.theme.TestCameraAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContent {
             TestCameraAppTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Greeting("Android")
-                }
+                CameraScreen()
             }
         }
     }
-}
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+fun CameraScreen(){
+    LaunchedEffect(Unit){
+        dispatchTakePictureIntent()
+    }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    TestCameraAppTheme {
-        Greeting("Android")
+    private fun dispatchTakePictureIntent() {
+        val REQUEST_IMAGE_CAPTURE = 1
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        try {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+        } catch (e: ActivityNotFoundException) {
+            // display error state to the user
+        }
     }
 }
